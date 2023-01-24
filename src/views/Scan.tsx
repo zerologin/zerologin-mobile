@@ -83,7 +83,7 @@ export default function Scan() {
             <View style={styles.menu}>
                 <ScanModal>
                     {!loggedIn && !lnurl && (
-                        <Text style={ScanModalStyles.text}>Please scan a valid QR code</Text>
+                        <Text style={ScanModalStyles.text}>Scan a valid QR code to login</Text>
                     )}
                     {!loggedIn && lnurl && (
                         <LoginAction

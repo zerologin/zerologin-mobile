@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
+import DisplayMnemonic from '../components/DisplayMnemonic'
 
 export default function CreateAccount() {
     const [generate, setGenerate] = useState(false)
@@ -46,24 +47,7 @@ export default function CreateAccount() {
     if (generate) {
         return (
             <View style={{ ...styles.container }}>
-                <View
-                    style={{
-                        flex: 1,
-                        margin: 20,
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        justifyContent: 'center',
-                    }}>
-                    {mnemonic.split(' ').map((w, i) => (
-                        <Text key={i} style={{ marginRight: 25, marginBottom: 25, fontSize: 16 }}>
-                            <Text style={{ color: '#6b6b6b' }}>#{i + 1}</Text> {w}
-                        </Text>
-                    ))}
-                    <Button
-                        text='I wrote it down'
-                        type={ButtonType.primary}
-                        onPress={handleGenerateDoneClick}></Button>
-                </View>
+                <DisplayMnemonic mnemonic={mnemonic}></DisplayMnemonic>
             </View>
         )
     }

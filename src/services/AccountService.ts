@@ -36,6 +36,21 @@ async function getCurrentAccount(): Promise<IMnemonic | null> {
     return { ...account, secrets: { mnemonic: secrets.mnemonic, seed: secrets.seed } }
 }
 
+async function getAccount(id: string, showSecrets: boolean = false): Promise<IMnemonic | null> {
+    const accounts = await getAccounts()
+    const account = accounts.find(a => a.id === id)
+
+    if (showSecrets && account !== undefined) {
+        const secrets: ISecret | null = await SecureStoreService.getAsync(id)
+        if (secrets === null) {
+            console.log(`No mnemonic found for id ${id}`)
+            return null
+        }
+        return { ...account, secrets: { mnemonic: secrets.mnemonic, seed: secrets.seed } }
+    }
+
+    return account ?? null
+}
 
 async function getAccounts(): Promise<IMnemonic[]> {
     const accounts = await StorageService.getAsync(ACCOUNTS)
@@ -58,10 +73,16 @@ async function addAccount(mnemonic: string): Promise<string> {
     return id
 }
 
-async function getAccount(id: string): Promise<IMnemonic | null> {
+async function deleteAccount(id: string): Promise<void> {
     const accounts = await getAccounts()
     const account = accounts.find(a => a.id === id)
-    return account ?? null
+    if (account === undefined) {
+        console.log(`No account found for id ${id}`)
+        return
+    }
+
+    await StorageService.setAsync(ACCOUNTS, JSON.stringify(accounts.filter(a => a.id !== id)))
+    await SecureStore.deleteItemAsync(id)
 }
 
 async function _debug_clearData() {
@@ -81,4 +102,4 @@ export interface ISecret {
     mnemonic: string
     seed: string
 }
-export default { setCurrentAccount, getCurrentAccount, addAccount, getAccount, getAccounts, _debug_clearData }
+export default { setCurrentAccount, getCurrentAccount, addAccount, getAccount, getAccounts, _debug_clearData, deleteAccount }
