@@ -1,12 +1,13 @@
 import * as bip39 from 'bip39'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { View, StyleSheet, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import DisplayMnemonic from '../components/DisplayMnemonic'
-import { Button, Text, VStack } from 'native-base'
+import { Box, Button, Text, VStack } from 'native-base'
+import { AccountContext } from '../contexts/Contexts'
 
 export default function CreateAccount() {
     const [generate, setGenerate] = useState(false)
@@ -14,11 +15,12 @@ export default function CreateAccount() {
     const [isMnemonicValid, setIsMnemonicValid] = useState(true)
     const [mnemonic, setMnemonic] = useState('')
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
+    const accountContext = useContext(AccountContext)
 
     const handleGenerateButtonClick = async () => {
         const mnemonic = bip39.generateMnemonic()
         const id = await AccountService.addAccount(mnemonic)
-        await AccountService.setCurrentAccount(id)
+        accountContext.setCurrentAccount(id)
         setMnemonic(mnemonic)
         setGenerate(true)
     }
@@ -35,7 +37,7 @@ export default function CreateAccount() {
             return
         }
         const id = await AccountService.addAccount(mnemonic)
-        await AccountService.setCurrentAccount(id)
+        accountContext.setCurrentAccount(id)
         navigation.popToTop()
     }
 
@@ -77,17 +79,25 @@ export default function CreateAccount() {
 
     return (
         <VStack style={styles.container} space={2}>
-            <Button onPress={handleGenerateButtonClick}>Generate</Button>
-            <Text>or</Text>
-            <Button variant='outline' onPress={handleImportButtonClick}>
-                Import
-            </Button>
+            <Box m={6}>
+                <Text fontSize='xl'>Generate or import your mnemonic.</Text>
+                <Text fontSize='xl'>KEEPT IT SAFE.</Text>
+                <Text fontSize='xl'>NEVER SHARE IT.</Text>
+            </Box>
+            <VStack style={styles.container} space={2}>
+                <Button onPress={handleGenerateButtonClick}>Generate</Button>
+                <Text>or</Text>
+                <Button variant='outline' onPress={handleImportButtonClick}>
+                    Import
+                </Button>
+            </VStack>
         </VStack>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        borderColor: 'black',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',

@@ -8,15 +8,10 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 
-const handleSetCurrentAccount = async (id: string) => {
-    await AccountService.setCurrentAccount(id)
-}
-
 export default function Accounts() {
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
     const currentAccountContext = useContext(AccountContext)
     const [accounts, setAccounts] = React.useState<IMnemonic[]>([])
-    // const [currentAccount, setCurrentAccount] = React.useState<string>('')
 
     useEffect(() => {
         const getAccounts = async () => {

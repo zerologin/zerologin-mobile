@@ -113,8 +113,9 @@ export default function App() {
                                     name='CreateAccount'
                                     component={CreateAccount}
                                     options={{
-                                        title: 'Generate or import your words mnemonic',
-                                        presentation: 'modal',
+                                        headerBackVisible: false,
+                                        title: 'Zerologin',
+                                        presentation: 'card',
                                     }}
                                 />
                                 <Stack.Screen

@@ -20,7 +20,7 @@ export default function Scan() {
             try {
                 const accounts = await AccountService.getAccounts()
                 if (accounts.length === 0) {
-                    navigation.navigate('CreateAccount')
+                    navigation.push('CreateAccount')
                 }
             } catch (e) {
                 console.error(e)
