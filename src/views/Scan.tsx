@@ -1,14 +1,15 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
+import { Button, Text } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Button, { ButtonType } from '../components/Button'
 import LoginAction from '../components/LoginAction'
 import ScanModal, { styles as ScanModalStyles } from '../components/ScanModal'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
+import { login } from '../services/LnurlService'
 
 export default function Scan() {
     const [loggedIn, setLoggedIn] = useState<{ domain: string; pubKey: string } | null>(null)
@@ -95,28 +96,20 @@ export default function Scan() {
                     {loggedIn && (
                         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
                             <Text style={{ ...ScanModalStyles.text, marginBottom: 5 }}>
-                                Authenticated to {loggedIn.domain}{' '}
+                                Authenticated to <Text color='primary.400'>{loggedIn.domain}</Text>
                             </Text>
-                            <Button
-                                text='Ok'
-                                type={ButtonType.primary}
-                                onPress={onLoggedinOk}></Button>
+                            <Button onPress={onLoggedinOk}>Ok</Button>
                         </View>
                     )}
-                    {/* <Button
-                        text='Erase data'
-                        type={ButtonType.primary}
-                        onPress={() => AccountService._debug_clearData()}
-                    />
+                    {/* <Button onPress={() => AccountService._debug_clearData()}>Erase data</Button>
                     <Button
-                        text='Login test'
-                        type={ButtonType.primary}
                         onPress={() =>
                             login(
-                                'lightning:LNURL1DP68GURN8GHJ7MRFVA58GMNFDENKCMM8D9HZUMRFWEJJ7MR0VA5KU0MTXY7K2ET9VV6KYDNRX5CX2DFKV3NXGVP3XGCNJDFKX43R2DN98YMRZWRR8YEKZWRP8YURGVRYVCERJDN9XF3RQDMYXFNRVV34V4SKGCTRXSN8GCT884KX7EMFDC8LNMFN'
+                                'lightning:LNURL1DP68GURN8GHJ7MRFVA58GMNFDENKCMM8D9HZUMRFWEJJ7MR0VA5KU0MTXY7K2DPSXA3NZDEEVVUNYDR98QCRWWPKXEJKXDRPXEJKVCMXXGURVVF58QMRYEPCXV6X2DPJVCMX2VEKXCENWDFHVVCRZDTZVDNXVDE4XUN8GCT884KX7EMFDCC0JZVH'
                             )
-                        }
-                    /> */}
+                        }>
+                        Login test
+                    </Button> */}
                 </ScanModal>
             </View>
         </SafeAreaView>

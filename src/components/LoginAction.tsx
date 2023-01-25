@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
-import Button, { ButtonType } from './Button'
+import { StyleSheet, View, ActivityIndicator } from 'react-native'
 import { login } from '../services/LnurlService'
 import { useState } from 'react'
 import * as lnurl from '@zerologin/lnurl'
+import { Button, Text } from 'native-base'
 
 interface LoginActionProps {
     lnurl: string
@@ -29,11 +29,15 @@ export default function LoginAction(props: LoginActionProps) {
 
     return (
         <>
-            <Text style={style.message}>Login request for {url.domain}</Text>
+            <Text style={style.message}>
+                Login request for <Text color='primary.400'>{url.domain}</Text>
+            </Text>
             {!connecting && (
                 <View style={style.buttons}>
-                    <Button text='Reject' type={ButtonType.secondary} onPress={props.onRejected} />
-                    <Button text='Login' type={ButtonType.primary} onPress={handleLoginPress} />
+                    <Button colorScheme='secondary' onPress={props.onRejected}>
+                        Reject
+                    </Button>
+                    <Button onPress={handleLoginPress}>Login</Button>
                 </View>
             )}
             {connecting && <ActivityIndicator size='large' color='blue' animating={connecting} />}

@@ -1,12 +1,12 @@
 import * as bip39 from 'bip39'
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TextInput } from 'react-native'
-import Button, { ButtonType } from '../components/Button'
+import { View, StyleSheet, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import DisplayMnemonic from '../components/DisplayMnemonic'
+import { Box, Button, Center, Text, VStack } from 'native-base'
 
 export default function CreateAccount() {
     const [generate, setGenerate] = useState(false)
@@ -54,7 +54,7 @@ export default function CreateAccount() {
 
     if (importMn) {
         return (
-            <View style={{ ...styles.container, padding: 20 }}>
+            <VStack style={styles.container} space={2} padding={4}>
                 <TextInput
                     multiline
                     numberOfLines={4}
@@ -69,27 +69,20 @@ export default function CreateAccount() {
                     }}
                     editable
                 />
-                <Button
-                    text='Import'
-                    type={ButtonType.primary}
-                    onPress={handleImportButtonClick}></Button>
+                <Button onPress={handleImportButtonClick}>Import</Button>
                 {!isMnemonicValid && <Text>Invalid Mnemonic</Text>}
-            </View>
+            </VStack>
         )
     }
 
     return (
-        <View style={styles.container}>
-            <Button
-                text='Generate'
-                type={ButtonType.primary}
-                onPress={handleGenerateButtonClick}></Button>
+        <VStack style={styles.container} space={2}>
+            <Button onPress={handleGenerateButtonClick}>Generate</Button>
             <Text>or</Text>
-            <Button
-                text='Import'
-                type={ButtonType.secondary}
-                onPress={handleImportButtonClick}></Button>
-        </View>
+            <Button variant='outline' onPress={handleImportButtonClick}>
+                Import
+            </Button>
+        </VStack>
     )
 }
 

@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet, Alert } from 'react-native'
-import Button, { ButtonType } from '../components/Button'
+// import Button, { ButtonType } from '../components/Button'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
+import { Box, Button, VStack } from 'native-base'
 
 export default function AccountSettings() {
     const [showConfirmDelete, setShowConfirmDelete] = React.useState(false)
@@ -58,17 +59,12 @@ export default function AccountSettings() {
     }
 
     return (
-        <View style={styles.container}>
+        <VStack space={4} margin={4}>
             <Text>Mnemonic type: BIP39</Text>
-            <Button text='View mnemonic' type={ButtonType.primary} onPress={handleviewMnemonic} />
-            <Button text='Delete account' type={ButtonType.secondary} onPress={showConfirmDialog} />
-        </View>
+            <Button onPress={handleviewMnemonic}>View mnemonic</Button>
+            <Button colorScheme='danger' onPress={showConfirmDialog}>
+                Delete account
+            </Button>
+        </VStack>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-    },
-})
