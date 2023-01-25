@@ -9,7 +9,7 @@ import LoginAction from '../components/LoginAction'
 import ScanModal, { styles as ScanModalStyles } from '../components/ScanModal'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
-import { login } from '../services/LnurlService'
+// import { login } from '../services/LnurlService'
 
 export default function Scan() {
     const [loggedIn, setLoggedIn] = useState<{ domain: string; pubKey: string } | null>(null)

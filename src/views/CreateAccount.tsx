@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import DisplayMnemonic from '../components/DisplayMnemonic'
-import { Box, Button, Center, Text, VStack } from 'native-base'
+import { Button, Text, VStack } from 'native-base'
 
 export default function CreateAccount() {
     const [generate, setGenerate] = useState(false)

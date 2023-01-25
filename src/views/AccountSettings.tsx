@@ -1,14 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet, Alert } from 'react-native'
-// import Button, { ButtonType } from '../components/Button'
+import { Text, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
-import { Box, Button, VStack } from 'native-base'
+import { Button, VStack } from 'native-base'
 
 export default function AccountSettings() {
-    const [showConfirmDelete, setShowConfirmDelete] = React.useState(false)
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
 
     const showConfirmDialog = () => {
@@ -21,7 +19,6 @@ export default function AccountSettings() {
                     style: 'destructive',
                     onPress: async () => {
                         await delectAccount()
-                        setShowConfirmDelete(false)
                     },
                 },
                 {
@@ -41,27 +38,10 @@ export default function AccountSettings() {
         navigation.push('Scan')
     }
 
-    async function handleviewMnemonic() {
-        const account = await AccountService.getCurrentAccount()
-        if (!account) {
-            console.error(
-                'No account to view mnemonic in account settings. This should not happen.'
-            )
-            return
-        }
-        if (!account.secrets) {
-            console.error(
-                'No account secrets to view mnemonic in account settings. This should not happen.'
-            )
-            return
-        }
-        navigation.navigate('ViewMnemonic', { mnemonic: account.secrets.mnemonic })
-    }
-
     return (
         <VStack space={4} margin={4}>
             <Text>Mnemonic type: BIP39</Text>
-            <Button onPress={handleviewMnemonic}>View mnemonic</Button>
+            <Button onPress={() => navigation.navigate('ViewMnemonic')}>View mnemonic</Button>
             <Button colorScheme='danger' onPress={showConfirmDialog}>
                 Delete account
             </Button>

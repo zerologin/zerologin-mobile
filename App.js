@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Scan from './src/views/Scan'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import CreateAccount from './src/views/CreateAccount'
 import AccountService from './src/services/AccountService'
 import AccountSettingsButton from './src/components/AccountSettingsButton'
@@ -17,7 +17,9 @@ import AccountSettings from './src/views/AccountSettings'
 import ViewMnemonic from './src/views/ViewMnemonic'
 import { AccountContext } from './src/contexts/Contexts'
 import AvatarButton from './src/components/AvatarButton'
-import { NativeBaseProvider, Box, extendTheme } from 'native-base'
+import { NativeBaseProvider, extendTheme } from 'native-base'
+import Accounts from './src/views/Accounts'
+import AddAccountButton from './src/components/AddAccountButton'
 
 const Stack = createNativeStackNavigator()
 
@@ -47,12 +49,22 @@ const theme = extendTheme({
 })
 
 export default function App() {
-    const [account, setAccount] = useState('')
+    const [accountId, setAccountId] = useState('')
+    const setCurrentAccount = useCallback(async (id) => {
+        console.log('setCurrentAccount in app.js')
+        setAccountId(id)
+        await AccountService.setCurrentAccount(id)
+    })
+    const accountContextValue = useMemo(
+        () => ({ id: accountId, setCurrentAccount }),
+        [accountId, setCurrentAccount]
+    )
+
     useEffect(() => {
         async function init() {
             const currentAccount = await AccountService.getCurrentAccount()
             if (currentAccount !== null) {
-                setAccount(currentAccount.id)
+                setAccountId(currentAccount.id)
             }
         }
         init()
@@ -61,7 +73,7 @@ export default function App() {
     return (
         <NativeBaseProvider theme={theme}>
             <SafeAreaProvider>
-                <AccountContext.Provider value={account}>
+                <AccountContext.Provider value={accountContextValue}>
                     <NavigationContainer>
                         <Stack.Navigator>
                             <Stack.Group
@@ -77,6 +89,7 @@ export default function App() {
                                     component={Scan}
                                     options={{
                                         title: 'Zerologin',
+                                        headerTitleAlign: 'center',
                                         headerTransparent: true,
                                         headerTintColor: '#fff',
                                         headerTitleStyle: {
@@ -112,13 +125,22 @@ export default function App() {
                                         headerBackTitle: 'Back',
                                     }}
                                 />
-                                <Stack.Group screenOptions={{ presentation: 'modal' }}>
-                                    <Stack.Screen
-                                        name='ViewMnemonic'
-                                        component={ViewMnemonic}
-                                        options={{ title: 'View Mnemonic' }}
-                                    />
-                                </Stack.Group>
+                                <Stack.Screen
+                                    name='Accounts'
+                                    component={Accounts}
+                                    options={{
+                                        title: 'Accounts',
+                                        headerBackTitle: 'Back',
+                                        headerRight: () => <AddAccountButton></AddAccountButton>,
+                                    }}
+                                />
+                            </Stack.Group>
+                            <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                                <Stack.Screen
+                                    name='ViewMnemonic'
+                                    component={ViewMnemonic}
+                                    options={{ title: 'View Mnemonic' }}
+                                />
                             </Stack.Group>
                         </Stack.Navigator>
                         <StatusBar style='auto' />

@@ -5,13 +5,13 @@ import DisplayMnemonic from '../components/DisplayMnemonic'
 import { AccountContext } from '../contexts/Contexts'
 
 export default function ViewMnemonic() {
-    const accountId = useContext(AccountContext)
+    const accountContext = useContext(AccountContext)
     const [mnemonic, setMnemonic] = useState('')
 
     useEffect(() => {
         async function fetchMnemonic() {
             try {
-                const account = await AccountService.getAccount(accountId, true)
+                const account = await AccountService.getAccount(accountContext.id, true)
                 if (account?.secrets?.mnemonic) {
                     setMnemonic(account.secrets.mnemonic)
                 }

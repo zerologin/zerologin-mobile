@@ -1,14 +1,17 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useContext } from 'react'
-import { SvgUri } from 'react-native-svg'
+import { Pressable } from 'react-native'
 import { AccountContext } from '../contexts/Contexts'
+import { RouteParams } from '../navigation/RootNavigator'
+import Avatar from './Avatar'
 
 export default function AvatarButton() {
-    const accountId = useContext(AccountContext)
+    const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
+    const currentAccount = useContext(AccountContext)
     return (
-        <SvgUri
-            width='32'
-            height='32'
-            uri={`https://source.boringavatars.com/beam/32/${accountId}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`}
-        />
+        <Pressable onPress={() => navigation.navigate('Accounts')}>
+            <Avatar size={32} identifier={currentAccount.id}></Avatar>
+        </Pressable>
     )
 }

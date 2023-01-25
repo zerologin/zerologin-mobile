@@ -9,6 +9,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const CURRENT_ACCOUNT = 'CURRENT_ACCOUNT'
 const ACCOUNTS = 'ACCOUNTS'
 
+/**
+ * DON'T USE THIS METHOD. USE THE CONTEXT INSTEAD
+ * 
+ * @example
+ * const currentAccountContext = useContext(AccountContext)
+ * currentAccountContext.setCurrentAccount("newId")
+ * 
+ * @param id 
+ */
+
 async function setCurrentAccount(id: string) {
     await StorageService.setAsync(CURRENT_ACCOUNT, id)
 }
