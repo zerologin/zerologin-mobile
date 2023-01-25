@@ -51,7 +51,6 @@ const theme = extendTheme({
 export default function App() {
     const [accountId, setAccountId] = useState('')
     const setCurrentAccount = useCallback(async (id) => {
-        console.log('setCurrentAccount in app.js')
         setAccountId(id)
         await AccountService.setCurrentAccount(id)
     })

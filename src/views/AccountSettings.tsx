@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import { Button, VStack } from 'native-base'
+import { AccountContext } from '../contexts/Contexts'
 
 export default function AccountSettings() {
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
+    const accountContext = useContext(AccountContext)
 
     const showConfirmDialog = () => {
         return Alert.alert(
@@ -35,6 +37,10 @@ export default function AccountSettings() {
             return
         }
         await AccountService.deleteAccount(account.id)
+        const accounts = await AccountService.getAccounts()
+        if (accounts.length > 0) {
+            await accountContext.setCurrentAccount(accounts[0].id)
+        }
         navigation.push('Scan')
     }
 
