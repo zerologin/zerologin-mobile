@@ -25,10 +25,6 @@ export default function CreateAccount() {
         setGenerate(true)
     }
 
-    const handleGenerateDoneClick = () => {
-        navigation.popToTop()
-    }
-
     const handleImportButtonClick = async () => {
         setImportMn(true)
 

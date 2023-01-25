@@ -19,7 +19,7 @@ export default function Accounts() {
             setAccounts(accounts)
         }
         getAccounts()
-    }, [])
+    }, [currentAccountContext.id])
 
     return (
         <Box>
