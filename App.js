@@ -9,14 +9,14 @@ import { StatusBar } from 'expo-status-bar'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Scan from './src/views/Scan'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { SvgUri } from 'react-native-svg'
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CreateAccount from './src/views/CreateAccount'
 import AccountService from './src/services/AccountService'
 import AccountSettingsButton from './src/components/AccountSettingsButton'
 import AccountSettings from './src/views/AccountSettings'
 import ViewMnemonic from './src/views/ViewMnemonic'
 import { AccountContext } from './src/contexts/Contexts'
+import AvatarButton from './src/components/AvatarButton'
 
 const Stack = createNativeStackNavigator()
 
@@ -55,13 +55,7 @@ export default function App() {
                                     headerTitleStyle: {
                                         fontWeight: 'bold',
                                     },
-                                    headerLeft: () => (
-                                        <SvgUri
-                                            width='32'
-                                            height='32'
-                                            uri={`https://source.boringavatars.com/beam/32/${account}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`}
-                                        />
-                                    ),
+                                    headerLeft: () => <AvatarButton></AvatarButton>,
                                     headerRight: () => (
                                         <AccountSettingsButton></AccountSettingsButton>
                                     ),
