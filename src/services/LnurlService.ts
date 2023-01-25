@@ -6,8 +6,6 @@ import AccountService from './AccountService'
 import { bip32 } from '../utils/bip32'
 import { BIP32Interface } from 'bip32';
 
-let root: BIP32Interface | null = null
-
 export const login = async (lnurlString: string): Promise<{ domain: string, pubKey: string }> => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -16,14 +14,12 @@ export const login = async (lnurlString: string): Promise<{ domain: string, pubK
             const k1 = lnurlObject.k1
             const domain = lnurlObject.domain
 
-            if (root === null) {
-                const account = await AccountService.getCurrentAccount()
-                if (account === null || account.secrets === null) {
-                    console.log('No current account set')
-                    return null
-                }
-                root = bip32.fromSeed(Buffer.from(account.secrets.seed, 'hex'))
+            const account = await AccountService.getCurrentAccount()
+            if (account === null || account.secrets === null) {
+                console.log('No current account set')
+                return null
             }
+            const root = bip32.fromSeed(Buffer.from(account.secrets.seed, 'hex'))
 
             const hashingKey = root.derivePath(`m/138'/0`)
             const hashingPrivKey = hashingKey.privateKey
