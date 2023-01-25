@@ -9,9 +9,12 @@ import LoginAction from '../components/LoginAction'
 import ScanModal, { styles as ScanModalStyles } from '../components/ScanModal'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
+import * as lnurlTools from '@zerologin/lnurl'
+import { useToast } from 'native-base'
 // import { login } from '../services/LnurlService'
 
 export default function Scan() {
+    const toast = useToast()
     const [loggedIn, setLoggedIn] = useState<{ domain: string; pubKey: string } | null>(null)
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
 
@@ -32,6 +35,7 @@ export default function Scan() {
     const [hasPermission, setHasPermission] = useState<boolean | null>(null)
     const [scanned, setScanned] = useState(false)
     const [lnurl, setLnurl] = useState<string | null>(null)
+    const [lastLnurlScanned, setLastLnurlScanned] = useState<string | null>(null)
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -43,8 +47,23 @@ export default function Scan() {
     }, [])
 
     const handleBarCodeScanned = async ({ data }: { data: string }) => {
-        setScanned(true)
-        setLnurl(data)
+        try {
+            const lnurl = lnurlTools.decode(data)
+            if (lnurl.tag === 'login') {
+                setScanned(true)
+                setLnurl(data)
+            }
+        } catch (e) {
+            if (lastLnurlScanned !== data) {
+                toast.show({
+                    backgroundColor: 'danger.500',
+                    placement: 'top',
+                    description: 'Invalid QR Code.',
+                })
+            }
+        } finally {
+            setLastLnurlScanned(data)
+        }
     }
 
     const onRejected = () => {
