@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "zerologin-app",
-    "slug": "zerologin-app",
+    "name": "Zerologin",
+    "slug": "zerologin",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,16 +18,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "co.zerologin.app.ios"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "co.zerologin.app.android"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "668b4723-6f3b-46a2-a984-58575c9d322d"
+      }
     }
   }
 }

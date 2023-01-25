@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "postinstall": "npx patch-package",
     "build:android": "eas build -p android",
-    "build:android:apk": "eas build -p android --profile apk",
+    "build:android:apk": "eas build -p android --profile preview",
     "build:android:dev": "eas build --profile development --platform android",
     "build:ios": "eas build -p ios",
     "build:ios:dev": "eas build --profile development --platform ios",
