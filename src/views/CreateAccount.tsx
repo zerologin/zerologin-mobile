@@ -6,43 +6,61 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import DisplayMnemonic from '../components/DisplayMnemonic'
-import { Box, Button, Text, VStack } from 'native-base'
+import { Box, Button, Text, useToast, VStack } from 'native-base'
 import { AccountContext } from '../contexts/Contexts'
 
 export default function CreateAccount() {
-    const [generate, setGenerate] = useState(false)
-    const [importMn, setImportMn] = useState(false)
-    const [isMnemonicValid, setIsMnemonicValid] = useState(true)
+    const toast = useToast()
+    const [generateAction, setGenerateAction] = useState(false)
+    const [importAction, setImportAction] = useState(false)
     const [mnemonic, setMnemonic] = useState('')
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
     const accountContext = useContext(AccountContext)
 
     const handleGenerateButtonClick = async () => {
         const mnemonic = bip39.generateMnemonic()
+
+        if (await AccountService.accountAlreadyExists(mnemonic)) {
+            toast.show({
+                title: 'Account already exists',
+                backgroundColor: 'danger.500',
+            })
+            return
+        }
+
         const id = await AccountService.addAccount(mnemonic)
         accountContext.setCurrentAccount(id)
         setMnemonic(mnemonic)
-        setGenerate(true)
+        setGenerateAction(true)
     }
 
     const handleImportButtonClick = async () => {
-        setImportMn(true)
-
         if (!bip39.validateMnemonic(mnemonic)) {
-            setIsMnemonicValid(false)
+            toast.show({
+                title: 'Invalid mnemonic',
+                backgroundColor: 'danger.500',
+            })
             return
         }
+
+        if (await AccountService.accountAlreadyExists(mnemonic)) {
+            toast.show({
+                title: 'Account already exists',
+                backgroundColor: 'danger.500',
+            })
+            return
+        }
+
         const id = await AccountService.addAccount(mnemonic)
         accountContext.setCurrentAccount(id)
         navigation.popToTop()
     }
 
     const handleImportInput = (text: string) => {
-        setIsMnemonicValid(true)
         setMnemonic(text)
     }
 
-    if (generate) {
+    if (generateAction) {
         return (
             <View style={{ ...styles.container }}>
                 <DisplayMnemonic mnemonic={mnemonic}></DisplayMnemonic>
@@ -50,7 +68,7 @@ export default function CreateAccount() {
         )
     }
 
-    if (importMn) {
+    if (importAction) {
         return (
             <VStack style={styles.container} space={2} padding={4}>
                 <TextInput
@@ -68,7 +86,6 @@ export default function CreateAccount() {
                     editable
                 />
                 <Button onPress={handleImportButtonClick}>Import</Button>
-                {!isMnemonicValid && <Text>Invalid Mnemonic</Text>}
             </VStack>
         )
     }
@@ -83,7 +100,7 @@ export default function CreateAccount() {
             <VStack style={styles.container} space={2}>
                 <Button onPress={handleGenerateButtonClick}>Generate</Button>
                 <Text>or</Text>
-                <Button variant='outline' onPress={handleImportButtonClick}>
+                <Button variant='outline' onPress={() => setImportAction(true)}>
                     Import
                 </Button>
             </VStack>

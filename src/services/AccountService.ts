@@ -67,6 +67,15 @@ async function getAccounts(): Promise<IMnemonic[]> {
     return accounts ?? []
 }
 
+async function accountAlreadyExists(mnemonic: string): Promise<boolean> {
+    const accounts = await getAccounts()
+    const id = await digestStringAsync(CryptoDigestAlgorithm.SHA256, mnemonic, {
+        encoding: CryptoEncoding.HEX,
+    })
+
+    return accounts.find(a => a.id === id) !== undefined
+}
+
 async function addAccount(mnemonic: string): Promise<string> {
     const accounts = await getAccounts()
     const id = await digestStringAsync(CryptoDigestAlgorithm.SHA256, mnemonic, {
@@ -112,4 +121,13 @@ export interface ISecret {
     mnemonic: string
     seed: string
 }
-export default { setCurrentAccount, getCurrentAccount, addAccount, getAccount, getAccounts, _debug_clearData, deleteAccount }
+export default {
+    _debug_clearData,
+    setCurrentAccount,
+    getCurrentAccount,
+    addAccount,
+    getAccount,
+    getAccounts,
+    deleteAccount,
+    accountAlreadyExists,
+}
