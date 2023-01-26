@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Button, Text } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { AppState, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import LoginAction from '../components/LoginAction'
 import ScanModal, { styles as ScanModalStyles } from '../components/ScanModal'
@@ -11,6 +11,7 @@ import { RouteParams } from '../navigation/RootNavigator'
 import AccountService from '../services/AccountService'
 import * as lnurlTools from '@zerologin/lnurl'
 import { useToast } from 'native-base'
+import * as Clipboard from 'expo-clipboard'
 // import { login } from '../services/LnurlService'
 
 export default function Scan() {
@@ -46,6 +47,32 @@ export default function Scan() {
         getBarCodeScannerPermissions()
     }, [])
 
+    const [fromClipboard, setFromClipboard] = useState(false)
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', async (nextAppState) => {
+            const text = await Clipboard.getStringAsync()
+            if (
+                nextAppState === 'active' &&
+                text !== lastLnurlScanned &&
+                (text.toLowerCase().startsWith('lightning:lnurl1') ||
+                    text.toLowerCase().startsWith('lnurl1'))
+            ) {
+                setFromClipboard(true)
+                await handleBarCodeScanned({ data: text })
+            }
+        })
+
+        return () => {
+            subscription.remove()
+        }
+    }, [])
+    const resetClipboard = async () => {
+        if (fromClipboard) {
+            await Clipboard.setStringAsync('')
+            setFromClipboard(false)
+        }
+    }
+
     const handleBarCodeScanned = async ({ data }: { data: string }) => {
         try {
             const lnurl = lnurlTools.decode(data)
@@ -66,17 +93,19 @@ export default function Scan() {
         }
     }
 
-    const onRejected = () => {
+    const onRejected = async () => {
         setScanned(false)
         setLnurl(null)
+        await resetClipboard()
     }
     const onLoggedin = (domain: string, pubKey: string) => {
         setLnurl(null)
         setLoggedIn({ domain, pubKey })
     }
-    const onLoggedinOk = () => {
+    const onLoggedinOk = async () => {
         setScanned(false)
         setLoggedIn(null)
+        await resetClipboard()
     }
 
     if (hasPermission === null) {
@@ -108,6 +137,7 @@ export default function Scan() {
                     {!loggedIn && lnurl && (
                         <LoginAction
                             lnurl={lnurl}
+                            fromClipboard={fromClipboard}
                             onRejected={onRejected}
                             onLoggedin={onLoggedin}
                         />

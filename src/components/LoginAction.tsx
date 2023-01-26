@@ -6,6 +6,7 @@ import { Button, Text } from 'native-base'
 
 interface LoginActionProps {
     lnurl: string
+    fromClipboard: boolean
     onLoggedin: (url: string, pubKey: string) => void
     onRejected: () => void
 }
@@ -30,7 +31,8 @@ export default function LoginAction(props: LoginActionProps) {
     return (
         <>
             <Text style={style.message}>
-                Login request for <Text color='primary.400'>{url.domain}</Text>
+                Login request for <Text color='primary.400'>{url.domain}</Text>{' '}
+                {props.fromClipboard && '(from clipboard)'}
             </Text>
             {!connecting && (
                 <View style={style.buttons}>
