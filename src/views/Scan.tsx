@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Button, Text } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppState, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import LoginAction from '../components/LoginAction'
@@ -12,6 +12,7 @@ import AccountService from '../services/AccountService'
 import * as lnurlTools from '@zerologin/lnurl'
 import { useToast } from 'native-base'
 import * as Clipboard from 'expo-clipboard'
+import { GlobalSettingsContext } from '../contexts/Contexts'
 // import { login } from '../services/LnurlService'
 
 export default function Scan() {
@@ -47,8 +48,12 @@ export default function Scan() {
         getBarCodeScannerPermissions()
     }, [])
 
+    /// Clipboard
+    const globalSettingsContext = useContext(GlobalSettingsContext)
     const [fromClipboard, setFromClipboard] = useState(false)
     useEffect(() => {
+        if (!globalSettingsContext.allowReadingClipboard) return
+
         const subscription = AppState.addEventListener('change', async (nextAppState) => {
             const text = await Clipboard.getStringAsync()
             if (
@@ -65,7 +70,7 @@ export default function Scan() {
         return () => {
             subscription.remove()
         }
-    }, [])
+    }, [globalSettingsContext.allowReadingClipboard])
     const resetClipboard = async () => {
         if (fromClipboard) {
             await Clipboard.setStringAsync('')

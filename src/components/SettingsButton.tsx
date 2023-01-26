@@ -8,7 +8,7 @@ export default function AccountSettingsButton() {
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
 
     return (
-        <Pressable onPress={() => navigation.navigate('AccountSettings')}>
+        <Pressable onPress={() => navigation.navigate('Settings')}>
             <Ionicons name='ios-settings' size={32} color='#fff' />
         </Pressable>
     )

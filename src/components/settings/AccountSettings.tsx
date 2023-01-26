@@ -2,10 +2,10 @@ import React, { useContext } from 'react'
 import { Text, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { RouteParams } from '../navigation/RootNavigator'
-import AccountService from '../services/AccountService'
 import { Button, VStack } from 'native-base'
-import { AccountContext } from '../contexts/Contexts'
+import { RouteParams } from '../../navigation/RootNavigator'
+import { AccountContext } from '../../contexts/Contexts'
+import AccountService from '../../services/AccountService'
 
 export default function AccountSettings() {
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
