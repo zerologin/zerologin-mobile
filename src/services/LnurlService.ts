@@ -4,7 +4,6 @@ import * as lnurl from '@zerologin/lnurl'
 import { bytesToHexString, hexToUint8Array, stringToUint8Array } from '../utils/Utils'
 import AccountService from './AccountService'
 import { bip32 } from '../utils/bip32'
-import { BIP32Interface } from 'bip32';
 
 export const login = async (lnurlString: string): Promise<{ domain: string, pubKey: string }> => {
     return new Promise(async (resolve, reject) => {

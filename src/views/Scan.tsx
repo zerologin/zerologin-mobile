@@ -60,7 +60,8 @@ export default function Scan() {
                 nextAppState === 'active' &&
                 text !== lastLnurlScanned &&
                 (text.toLowerCase().startsWith('lightning:lnurl1') ||
-                    text.toLowerCase().startsWith('lnurl1'))
+                    text.toLowerCase().startsWith('lnurl1') ||
+                    text.toLowerCase().startsWith('keyauth://'))
             ) {
                 setFromClipboard(true)
                 await handleBarCodeScanned({ data: text })

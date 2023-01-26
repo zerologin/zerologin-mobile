@@ -2991,10 +2991,10 @@
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
   integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
 
-"@zerologin/lnurl@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@zerologin/lnurl/-/lnurl-0.1.1.tgz#d20257dd6a33112a00b0a48e2db2f8145338b166"
-  integrity sha512-JkHofgbOpfXtzYDi92WENuXGdpVW0NlHkgxYZCRVnlI9tje+nx2k78fyB8VBtvekHEbHgv3u8WHMhKuDSZ/xRA==
+"@zerologin/lnurl@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@zerologin/lnurl/-/lnurl-0.1.2.tgz#f4747d8f103301a6018f2692df0a845274d0016b"
+  integrity sha512-HIq+1NiVCW5jSxWWea1WNVo7fSyJJ+lb/rX6Vf/UIbdWvxxWaTrUP5t2cZWCXV+VP1QQ7sGRK31EYSS2pVb6lQ==
   dependencies:
     bech32 "^2.0.0"
 
