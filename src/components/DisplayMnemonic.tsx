@@ -17,7 +17,7 @@ export default function DisplayMnemonic(props: { mnemonic: string }) {
                     </Text>
                 ))}
             </Flex>
-            <Button onPress={() => navigation.goBack()}>I wrote it down</Button>
+            <Button onPress={() => navigation.replace('Scan')}>I wrote it down</Button>
         </Box>
     )
 }

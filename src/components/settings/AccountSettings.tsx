@@ -40,8 +40,11 @@ export default function AccountSettings() {
         const accounts = await AccountService.getAccounts()
         if (accounts.length > 0) {
             await accountContext.setCurrentAccount(accounts[0].id)
+            navigation.navigate('Scan')
+        } else {
+            navigation.popToTop()
+            navigation.replace('WelcomeCreateAccount')
         }
-        navigation.push('Scan')
     }
 
     return (

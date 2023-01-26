@@ -127,10 +127,18 @@ export default function App() {
                                         },
                                     }}>
                                     <Stack.Screen
-                                        name='CreateAccount'
+                                        name='WelcomeCreateAccount'
                                         component={CreateAccount}
                                         options={{
                                             headerBackVisible: false,
+                                            title: 'Zerologin',
+                                            presentation: 'card',
+                                        }}
+                                    />
+                                    <Stack.Screen
+                                        name='CreateAccount'
+                                        component={CreateAccount}
+                                        options={{
                                             title: 'Zerologin',
                                             presentation: 'card',
                                         }}
