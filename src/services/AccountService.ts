@@ -82,7 +82,12 @@ async function addAccount(mnemonic: string): Promise<string> {
         encoding: CryptoEncoding.HEX,
     })
 
-    accounts.push({ id, createdAt: new Date(), secrets: null })
+    accounts.push({
+        id,
+        label: null,
+        createdAt: new Date(),
+        secrets: null
+    })
     await StorageService.setAsync(ACCOUNTS, JSON.stringify(accounts))
 
     const seed = await seedFromWords(mnemonic)
@@ -104,6 +109,18 @@ async function deleteAccount(id: string): Promise<void> {
     await SecureStore.deleteItemAsync(id)
 }
 
+async function setLabelById(accountId: string, label: string): Promise<void> {
+    const accounts = await getAccounts()
+    const account = accounts.find(a => a.id === accountId)
+    if (account === undefined) {
+        console.log(`No account found for id ${accountId}`)
+        return
+    }
+
+    account.label = label
+    await StorageService.setAsync(ACCOUNTS, JSON.stringify(accounts))
+}
+
 async function _debug_clearData() {
     await AsyncStorage.clear()
     const accounts = await getAccounts()
@@ -114,6 +131,7 @@ async function _debug_clearData() {
 
 export interface IMnemonic {
     id: string
+    label: string | null
     secrets: ISecret | null
     createdAt: Date
 }
@@ -130,4 +148,5 @@ export default {
     getAccounts,
     deleteAccount,
     accountAlreadyExists,
+    setLabelById
 }

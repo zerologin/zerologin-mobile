@@ -31,7 +31,7 @@ export default function Accounts() {
                         onPress={() => currentAccountContext.setCurrentAccount(item.id)}
                         onLongPress={() => {
                             currentAccountContext.setCurrentAccount(item.id)
-                            navigation.navigate('AccountSettings')
+                            navigation.navigate('Settings')
                         }}>
                         <Box
                             borderBottomWidth='1'
@@ -51,7 +51,7 @@ export default function Accounts() {
                                         }}
                                         color='coolGray.800'
                                         bold>
-                                        {item.id.substring(0, 8)}
+                                        {item.label ?? item.id.substring(0, 8)}
                                     </Text>
                                     <Text
                                         color='coolGray.600'
