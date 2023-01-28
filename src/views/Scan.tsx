@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Button, Text } from 'native-base'
 import React, { useContext, useEffect, useState } from 'react'
-import { AppState, StyleSheet, View } from 'react-native'
+import { AppState, Linking, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import LoginAction from '../components/LoginAction'
 import ScanModal, { styles as ScanModalStyles } from '../components/ScanModal'
@@ -72,12 +72,24 @@ export default function Scan() {
             subscription.remove()
         }
     }, [globalSettingsContext.allowReadingClipboard])
-    const resetClipboard = async () => {
+    const resetClipboardIfEnabled = async () => {
         if (fromClipboard) {
             await Clipboard.setStringAsync('')
             setFromClipboard(false)
         }
     }
+
+    // Init Linking events (opening Zerologin from another app using keyauth:// scheme)
+    useEffect(() => {
+        const subscription = Linking.addEventListener('url', async (data) => {
+            navigation.navigate('Scan')
+            await handleBarCodeScanned({ data: data.url })
+        })
+
+        return () => {
+            subscription.remove()
+        }
+    }, [])
 
     const handleBarCodeScanned = async ({ data }: { data: string }) => {
         try {
@@ -102,16 +114,21 @@ export default function Scan() {
     const onRejected = async () => {
         setScanned(false)
         setLnurl(null)
-        await resetClipboard()
+        await resetClipboardIfEnabled()
     }
     const onLoggedin = (domain: string, pubKey: string) => {
         setLnurl(null)
         setLoggedIn({ domain, pubKey })
+
+        // Auto dismiss modal after 10 seconds
+        setTimeout(async () => {
+            await onLoggedinOkButton()
+        }, 10000)
     }
-    const onLoggedinOk = async () => {
+    const onLoggedinOkButton = async () => {
         setScanned(false)
         setLoggedIn(null)
-        await resetClipboard()
+        await resetClipboardIfEnabled()
     }
 
     if (hasPermission === null) {
@@ -153,7 +170,7 @@ export default function Scan() {
                             <Text style={{ ...ScanModalStyles.text, marginBottom: 5 }}>
                                 Authenticated to <Text color='primary.400'>{loggedIn.domain}</Text>
                             </Text>
-                            <Button onPress={onLoggedinOk}>Ok</Button>
+                            <Button onPress={onLoggedinOkButton}>Ok</Button>
                         </View>
                     )}
                     {/* <Button onPress={() => AccountService._debug_clearData()}>Erase data</Button>
