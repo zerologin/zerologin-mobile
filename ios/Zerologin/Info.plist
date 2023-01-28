@@ -26,7 +26,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>keyauth</string>
-          <string>co.zerologin.app.ios.test</string>
+          <string>co.zerologin.app.ios</string>
         </array>
       </dict>
       <dict>
