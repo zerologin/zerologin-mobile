@@ -94,7 +94,7 @@ export default function CreateAccount() {
         <VStack style={styles.container} space={2}>
             <Box m={6}>
                 <Text fontSize='xl'>Generate or import your mnemonic.</Text>
-                <Text fontSize='xl'>KEEPT IT SAFE.</Text>
+                <Text fontSize='xl'>KEEP IT SAFE.</Text>
                 <Text fontSize='xl'>NEVER SHARE IT.</Text>
             </Box>
             <VStack style={styles.container} space={2}>
