@@ -23,7 +23,7 @@ export default {
             bundleIdentifier: 'co.zerologin.app.ios',
         },
         android: {
-            versionCode: 4,
+            versionCode: 5,
             adaptiveIcon: {
                 foregroundImage: './assets/adaptive-icon.png',
                 backgroundColor: '#FFFFFF',
