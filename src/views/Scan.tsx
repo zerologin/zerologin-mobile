@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Button, Text } from 'native-base'
@@ -20,20 +20,7 @@ export default function Scan() {
     const [loggedIn, setLoggedIn] = useState<{ domain: string; pubKey: string } | null>(null)
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
 
-    useEffect(() => {
-        async function fetchAccounts() {
-            try {
-                const accounts = await AccountService.getAccounts()
-                if (accounts.length === 0) {
-                    navigation.push('WelcomeCreateAccount')
-                }
-            } catch (e) {
-                console.error(e)
-            }
-        }
-        fetchAccounts()
-    }, [])
-
+    // Camera permissions
     const [hasPermission, setHasPermission] = useState<boolean | null>(null)
     const [scanned, setScanned] = useState(false)
     const [lnurl, setLnurl] = useState<string | null>(null)
@@ -46,6 +33,46 @@ export default function Scan() {
         }
 
         getBarCodeScannerPermissions()
+    }, [])
+
+    // Setup enable/disable camera on Screen focus and AppState change
+    const [isScreenFocused, setIsScreenFocused] = useState(true)
+    useFocusEffect(
+        React.useCallback(() => {
+            setIsScreenFocused(true)
+
+            return () => {
+                setIsScreenFocused(false)
+            }
+        }, [])
+    )
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', async (nextAppState) => {
+            if (nextAppState === 'active' && isScreenFocused) {
+                setIsScreenFocused(true)
+            } else {
+                setIsScreenFocused(false)
+            }
+        })
+
+        return () => {
+            subscription.remove()
+        }
+    }, [])
+
+    // Setup account
+    useEffect(() => {
+        async function fetchAccounts() {
+            try {
+                const accounts = await AccountService.getAccounts()
+                if (accounts.length === 0) {
+                    navigation.push('WelcomeCreateAccount')
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchAccounts()
     }, [])
 
     /// Clipboard
@@ -148,10 +175,12 @@ export default function Scan() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                style={styles.camera}
-            />
+            {isScreenFocused && (
+                <BarCodeScanner
+                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                    style={styles.camera}
+                />
+            )}
             <View style={styles.menu}>
                 <ScanModal>
                     {!loggedIn && !lnurl && (
