@@ -31,11 +31,11 @@ export default function CreateAccount() {
             return
         }
 
-        setIsGenerating(false)
         const id = await AccountService.addAccount(mnemonic)
         accountContext.setCurrentAccount(id)
         setMnemonic(mnemonic)
         setGenerateAction(true)
+        setIsGenerating(false)
     }
 
     const [isImporting, setIsImporting] = useState(false)
