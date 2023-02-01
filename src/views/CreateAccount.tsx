@@ -17,7 +17,9 @@ export default function CreateAccount() {
     const navigation = useNavigation<NativeStackNavigationProp<RouteParams>>()
     const accountContext = useContext(AccountContext)
 
+    const [isGenerating, setIsGenerating] = useState(false)
     const handleGenerateButtonClick = async () => {
+        setIsGenerating(true)
         const mnemonic = bip39.generateMnemonic()
 
         if (await AccountService.accountAlreadyExists(mnemonic)) {
@@ -25,21 +27,26 @@ export default function CreateAccount() {
                 title: 'Account already exists',
                 backgroundColor: 'danger.500',
             })
+            setIsGenerating(false)
             return
         }
 
+        setIsGenerating(false)
         const id = await AccountService.addAccount(mnemonic)
         accountContext.setCurrentAccount(id)
         setMnemonic(mnemonic)
         setGenerateAction(true)
     }
 
+    const [isImporting, setIsImporting] = useState(false)
     const handleImportButtonClick = async () => {
+        setIsImporting(true)
         if (!bip39.validateMnemonic(mnemonic)) {
             toast.show({
                 title: 'Invalid mnemonic',
                 backgroundColor: 'danger.500',
             })
+            setIsImporting(false)
             return
         }
 
@@ -48,12 +55,14 @@ export default function CreateAccount() {
                 title: 'Account already exists',
                 backgroundColor: 'danger.500',
             })
+            setIsImporting(false)
             return
         }
 
         const id = await AccountService.addAccount(mnemonic)
         accountContext.setCurrentAccount(id)
-        navigation.popToTop()
+        setIsImporting(false)
+        navigation.replace('Scan')
     }
 
     const handleImportInput = (text: string) => {
@@ -85,7 +94,12 @@ export default function CreateAccount() {
                     }}
                     editable
                 />
-                <Button onPress={handleImportButtonClick}>Import</Button>
+                <Button
+                    isLoading={isImporting}
+                    isLoadingText='Importing'
+                    onPress={handleImportButtonClick}>
+                    Import
+                </Button>
             </VStack>
         )
     }
@@ -98,11 +112,18 @@ export default function CreateAccount() {
                 <Text fontSize='xl'>NEVER SHARE IT.</Text>
             </Box>
             <VStack style={styles.container} space={2}>
-                <Button onPress={handleGenerateButtonClick}>Generate</Button>
-                <Text>or</Text>
-                <Button variant='outline' onPress={() => setImportAction(true)}>
-                    Import
+                <Button
+                    isLoading={isGenerating}
+                    isLoadingText='Generating seed'
+                    onPress={handleGenerateButtonClick}>
+                    Generate
                 </Button>
+                {!isGenerating && <Text>or</Text>}
+                {!isGenerating && (
+                    <Button variant='outline' onPress={() => setImportAction(true)}>
+                        Import
+                    </Button>
+                )}
             </VStack>
         </VStack>
     )
