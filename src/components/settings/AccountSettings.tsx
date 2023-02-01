@@ -7,6 +7,7 @@ import {
     Center,
     Divider,
     FormControl,
+    Heading,
     Input,
     Modal,
     Text,
@@ -46,7 +47,7 @@ export default function AccountSettings() {
     const saveLabel = async (label: string | undefined) => {
         if (!label || label.length === 0) {
             toast.show({
-                title: 'Label cannot be empty',
+                title: 'Name cannot be empty',
                 backgroundColor: 'red.500',
             })
             return
@@ -55,14 +56,14 @@ export default function AccountSettings() {
         await AccountService.setLabelById(accountContext.id, label)
         await loadAccount()
         toast.show({
-            title: 'Label changed',
+            title: 'Name changed',
         })
     }
 
     const showChangeLabelDialog = () => {
         if (Platform.OS === 'ios') {
             Alert.prompt(
-                'Enter new label',
+                'Enter a new name',
                 '',
                 [
                     {
@@ -123,18 +124,18 @@ export default function AccountSettings() {
 
     return (
         <VStack space={4} margin={4}>
-            <Text>Current label: {account?.label ?? account?.id}</Text>
-            <Button onPress={showChangeLabelDialog}>Change label</Button>
+            <Heading size="md">Account name</Heading>
+            <Text>{account?.label ?? account?.id}</Text>
+            <Text italic>Arbitrary information indicating the purpose of your account.</Text>
+            <Button onPress={showChangeLabelDialog}>Change name</Button>
 
             {Platform.OS === 'android' && (
                 <Center>
                     <Modal isOpen={showAndroidModal} onClose={() => setShowAndroidModal(false)}>
                         <Modal.Content>
-                            <Modal.CloseButton />
-                            <Modal.Header>Enter new label</Modal.Header>
                             <Modal.Body>
                                 <FormControl>
-                                    <FormControl.Label>Label</FormControl.Label>
+                                    <FormControl.Label>Enter a new name</FormControl.Label>
                                     <Input value={label} onChangeText={handleLabelChangeAndroid} />
                                 </FormControl>
                             </Modal.Body>
