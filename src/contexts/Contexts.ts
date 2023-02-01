@@ -8,13 +8,3 @@ export const AccountContext = createContext<IAccountContext>({
     id: '',
     setCurrentAccount: async () => { }
 });
-
-
-interface IGlobalSettingsContext {
-    allowReadingClipboard: boolean,
-    setAllowReadingClipboard: (value: boolean) => Promise<void>
-}
-export const GlobalSettingsContext = createContext<IGlobalSettingsContext>({
-    allowReadingClipboard: false,
-    setAllowReadingClipboard: async () => { }
-});

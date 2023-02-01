@@ -16,8 +16,10 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
         opacity: 0.8,
         padding: 20,
+        paddingBottom: 10,
     },
     text: {
+        fontSize: 16,
         color: '#fff',
         textAlign: 'center',
     },

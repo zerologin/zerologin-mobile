@@ -2,7 +2,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BarCodeScanner, PermissionStatus } from 'expo-barcode-scanner'
 import { Button, Text } from 'native-base'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AppState, Linking, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import LoginAction from '../components/LoginAction'
@@ -12,7 +12,7 @@ import AccountService from '../services/AccountService'
 import * as lnurlTools from '@zerologin/lnurl'
 import { useToast } from 'native-base'
 import * as Clipboard from 'expo-clipboard'
-import { GlobalSettingsContext } from '../contexts/Contexts'
+import { FontAwesome5 } from '@expo/vector-icons'
 // import { login } from '../services/LnurlService'
 
 export default function Scan() {
@@ -76,33 +76,25 @@ export default function Scan() {
     }, [])
 
     /// Clipboard
-    const globalSettingsContext = useContext(GlobalSettingsContext)
     const [fromClipboard, setFromClipboard] = useState(false)
-    useEffect(() => {
-        if (!globalSettingsContext.allowReadingClipboard) return
-
-        const subscription = AppState.addEventListener('change', async (nextAppState) => {
-            const text = await Clipboard.getStringAsync()
-            if (
-                nextAppState === 'active' &&
-                text !== lastLnurlScanned &&
-                (text.toLowerCase().startsWith('lightning:lnurl1') ||
-                    text.toLowerCase().startsWith('lnurl1') ||
-                    text.toLowerCase().startsWith('keyauth://'))
-            ) {
-                setFromClipboard(true)
-                await handleBarCodeScanned({ data: text })
-            }
-        })
-
-        return () => {
-            subscription.remove()
+    const onClipboardButton = async () => {
+        const text = await Clipboard.getStringAsync()
+        if (
+            !text.toLowerCase().startsWith('lightning:lnurl1') &&
+            !text.toLowerCase().startsWith('lnurl1') &&
+            !text.toLowerCase().startsWith('keyauth://')
+        ) {
+            toast.show({
+                backgroundColor: 'danger.500',
+                placement: 'top',
+                description: 'Invalid QR Code.',
+            })
+            return
         }
-    }, [globalSettingsContext.allowReadingClipboard])
-    const resetClipboardIfEnabled = async () => {
-        if (fromClipboard) {
-            await Clipboard.setStringAsync('')
-            setFromClipboard(false)
+
+        if (text !== lastLnurlScanned) {
+            setFromClipboard(true)
+            await handleBarCodeScanned({ data: text })
         }
     }
 
@@ -141,7 +133,8 @@ export default function Scan() {
     const onRejected = async () => {
         setScanned(false)
         setLnurl(null)
-        await resetClipboardIfEnabled()
+        setFromClipboard(false)
+        setLastLnurlScanned(null)
     }
     const onLoggedin = (domain: string, pubKey: string) => {
         setLnurl(null)
@@ -155,7 +148,7 @@ export default function Scan() {
     const onLoggedinOkButton = async () => {
         setScanned(false)
         setLoggedIn(null)
-        await resetClipboardIfEnabled()
+        setFromClipboard(false)
     }
 
     if (hasPermission === null) {
@@ -184,7 +177,9 @@ export default function Scan() {
             <View style={styles.menu}>
                 <ScanModal>
                     {!loggedIn && !lnurl && (
-                        <Text style={ScanModalStyles.text}>Scan a valid QR code to login</Text>
+                        <>
+                            <Text style={ScanModalStyles.text}>Scan a valid QR code to login</Text>
+                        </>
                     )}
                     {!loggedIn && lnurl && (
                         <LoginAction
@@ -202,8 +197,20 @@ export default function Scan() {
                             <Button onPress={onLoggedinOkButton}>Ok</Button>
                         </View>
                     )}
-                    {/* <Button onPress={() => AccountService._debug_clearData()}>Erase data</Button>
-                    <Button
+
+                    {!loggedIn && !lnurl && (
+                        <Button
+                            style={{ marginTop: 10 }}
+                            onPress={onClipboardButton}
+                            variant='ghost'
+                            colorScheme='secondary'
+                            leftIcon={<FontAwesome5 name='paste' size={16} color='white' />}>
+                            paste from clipboard
+                        </Button>
+                    )}
+
+                    {/* <Button onPress={() => AccountService._debug_clearData()}>Erase data</Button> */}
+                    {/* <Button
                         onPress={() =>
                             login(
                                 'lightning:LNURL1DP68GURN8GHJ7MRFVA58GMNFDENKCMM8D9HZUMRFWEJJ7MR0VA5KU0MTXY7K2DPSXA3NZDEEVVUNYDR98QCRWWPKXEJKXDRPXEJKVCMXXGURVVF58QMRYEPCXV6X2DPJVCMX2VEKXCENWDFHVVCRZDTZVDNXVDE4XUN8GCT884KX7EMFDCC0JZVH'
